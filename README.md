@@ -4,6 +4,27 @@
 
 ## Install
 
+Simply add to build modules after installing:
+
+```js
+    buildModules: [
+        // ...
+        // https://github.com/whardier/nuxt-hero-icons
+        '@nuxt-hero-icons/outline/nuxt',
+        '@nuxt-hero-icons/solid/nuxt',
+    ],
+```
+
+And use in your templates using your own classes (example using TailwindCSS w-8/h-8 classes):
+
+```html
+<template>
+    <div>
+      <outline-annotation-icon class="w-8 h-8" />
+    </div>
+</template>
+```
+
 ## Usage
 
 See all icons and usage here: https://vue-hero-icons.netlify.com
