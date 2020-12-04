@@ -1,15 +1,15 @@
 {
-  "name": "vue-hero-icons",
-  "version": "1.6.3",
+  "name": "nuxt-hero-icons",
+  "version": "1.0.0",
   "description": "A set of free MIT-licensed high-quality SVG icons as Vue functional components.",
   "repository": {
-    "url": "matschik/vue-hero-icons",
+    "url": "whardier/nuxt-hero-icons",
     "type": "git"
   },
-  "homepage": "https://vue-hero-icons.netlify.com",
+  "homepage": "https://github.com/whardier/nuxt-hero-icons",
   "keywords": [
     "icons",
-    "vuejs"
+    "nuxtjs"
   ],
   "scripts": {
     "prepublishOnly": "yarn build",
@@ -17,24 +17,13 @@
     "dev": "nuxt",
     "docs:build": "yarn build && nuxt generate"
   },
-  "author": "Mathieu SCHIMMERLING <mathieu.schimmerling@protonmail.com>",
+  "author": "Shane Spencer <spencersr@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@vue/babel-helper-vue-jsx-merge-props": "^1.0.0",
     "heroicons": "git+https://github.com/tailwindlabs/heroicons.git#master"
   },
   "devDependencies": {
-    "@babel/core": "^7.11.4",
-    "@tailwindcss/ui": "^0.7.2",
-    "@vue/babel-preset-jsx": "^1.1.2",
-    "babel-loader": "^8.1.0",
-    "babel-plugin-syntax-jsx": "^6.18.0",
-    "babel-plugin-transform-vue-jsx": "^3.7.0",
     "fs-extra": "^9.0.1",
-    "nuxt": "^2.14.7",
-    "pascal-case": "^3.1.1",
-    "rollup": "^2.26.6",
-    "rollup-plugin-babel": "^4.4.0",
-    "tailwindcss": "^1.9.6"
+    "pascal-case": "^3.1.2"
   }
 }

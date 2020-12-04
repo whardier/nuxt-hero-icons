@@ -6,51 +6,46 @@ const pkg = require("./package.json");
 // const handleComponentName = (name) => name.replace(/\-(\d+)/, "$1");
 
 const componentTemplate = (name, svg) =>
-  `
-export default {
-  name: '${name}',
-  
-  props: {
-    size: {
-      type: String,
-      default: '24',
-      validator: (s) => (!isNaN(s) || s.length >= 2 && !isNaN(s.slice(0, s.length -1)) && s.slice(-1) === 'x' )
-    }
-  },
-
-  functional: true,
-
-  render(h, ctx) {
-    const size = ctx.props.size.slice(-1) === 'x' 
-      ? ctx.props.size.slice(0, ctx.props.size.length -1) + 'em'
-      : parseInt(ctx.props.size) + 'px';
-
-    const attrs = ctx.data.attrs || {}
-    attrs.width = attrs.width || size
-    attrs.height = attrs.height || size
-    ctx.data.attrs = attrs
-  
-    return ${svg.replace(/<svg([^>]+)>/, "<svg$1 {...ctx.data}>")}
-  }
-}
+  `<template>
+${svg.trim().replace(/^/mg, '  ')}
+</template>
 `.trim();
+
+const nuxtIndexJSTemplate = (category) =>
+  `import { join } from "path";
+
+export default function () {
+  const { nuxt } = this
+
+  if (!nuxt.options.components) {
+    throw new Error('please set \`components: true\` inside \`nuxt.config\` and ensure using \`nuxt >= 2.13.0\`')
+  }
+
+  this.nuxt.hook("components:dirs", (dirs) => {
+    dirs.push({
+      path: join(__dirname, "../src/components"),
+      prefix: "${category}",
+    });
+  });
+}
+`.trim()
 
 const packageJSONTemplate = (category) =>
   `{
-  "name": "@vue-hero-icons/${category}",
+  "name": "@nuxt-hero-icons/${category}",
   "version": "${pkg.version}",
-  "main": "lib/index.cjs.js",
-  "module": "lib/index.es.js",
-  "jsnext:main": "lib/index.es.js",
   "license": "${pkg.license}",
   "homepage": "${pkg.homepage}",
   "description": "${pkg.description}",
   "keywords": ${JSON.stringify(pkg.keywords)},
   "repository": ${JSON.stringify(pkg.repository)},
   "author": "${pkg.author}",
+  "files": [
+    "src",
+    "nuxt"
+  ],
   "dependencies": {
-    "heroicons": "${pkg.dependencies.heroicons}",
-    "@vue/babel-helper-vue-jsx-merge-props": "${pkg.dependencies['@vue/babel-helper-vue-jsx-merge-props']}"
+    "heroicons": "${pkg.dependencies.heroicons}"
   }
 }
 `.trim();
@@ -86,29 +81,26 @@ async function main() {
     // Create Vue component files
     const svg = await fs.readFile(icon.path, "utf8");
     const component = componentTemplate(icon.componentName, svg);
-    const filepath = `./packages/${icon.category}/icons/${icon.componentName}.js`;
+    const filepath = `./packages/${icon.category}/src/components/${icon.componentName}.vue`;
     await fs.ensureDir(path.dirname(filepath));
     await fs.writeFile(filepath, component, "utf8");
-
-    // Create packages directories
-    const packagePath = `./packages/${icon.category}`;
 
     const indexJSContent = `export { default as ${icon.componentName} } from './icons/${icon.componentName}'`.concat(
       "\n\n"
     );
-
-    const indexJSPath = path.join(__dirname, packagePath, "index.js");
-    if (await fs.exists(indexJSPath)) {
-      await fs.appendFile(indexJSPath, indexJSContent, "utf8");
-    } else {
-      await fs.writeFile(indexJSPath, indexJSContent, "utf8");
-    }
   }
 
   for (const category of Object.values(categoryByOriginCategory)) {
+    const packagePath = path.join('.', 'packages', category);
+    const nuxtIndexJSPath = path.join(__dirname, packagePath, "nuxt", "index.js");
+
+    await fs.ensureDir(path.dirname(nuxtIndexJSPath));
+    await fs.writeFile(nuxtIndexJSPath, nuxtIndexJSTemplate(category), "utf8");
+
     await fs.writeFile(
       path.join(__dirname, `./packages/${category}/package.json`),
-      packageJSONTemplate(category)
+      packageJSONTemplate(category),
+      "utf8"
     );
 
     await fs.copyFile(
@@ -121,3 +113,4 @@ async function main() {
 main().catch((err) => {
   console.error(err);
 });
+
