@@ -1,6 +1,6 @@
 {
   "name": "nuxt-hero-icons",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A set of free MIT-licensed high-quality SVG icons as Vue functional components.",
   "repository": {
     "url": "whardier/nuxt-hero-icons",
